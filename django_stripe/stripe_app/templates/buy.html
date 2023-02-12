@@ -12,7 +12,7 @@
     <button id="buy-button" style="color: green; width: 45px; font-size: 16px" >Buy</button>
   </div>
    <script type="text/javascript">
-      let stripe = Stripe('pk_test_51MZt18II8Ne1sge3nyhdcGQHOVdkxVGhOLmfwx2QMWOscx3aHHC6RFRQI9Dd4wxkA7BAu879lK3MGsZKr7Q8L9kl001LIFVrUP');
+      let stripe = Stripe(`{{ stripe_key }}`);
       let buyButton = document.getElementById('buy-button');
       buyButton.addEventListener('click', () => {
         fetch(`/item/{{item.pk}}`, {method: 'GET'})

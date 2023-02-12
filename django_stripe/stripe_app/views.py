@@ -1,9 +1,10 @@
+import os
 from django.shortcuts import render
 import stripe
 from .models import Item
 from django.http import HttpResponse
 
-stripe.api_key = "sk_test_51MZt18II8Ne1sge3CjGUHR0jQCa7sscZxcgbQ76pBwYwCxDTeXPOIA0rgx8Qq38fXm4cm6Nle52kV2a15VFlzuxC00AKQeGL3i"
+stripe.api_key = os.getenv("STRIPE_API_KEY")
 
 
 def get_stripe_session(request, item_id):
@@ -19,8 +20,8 @@ def get_stripe_session(request, item_id):
             }
         ],
         mode='payment',
-        success_url=f"http://localhost:8000/success/{item_id}",
-        cancel_url="http://localhost:8000/cancel/",
+        success_url=f"http://{os.getenv('DOMAIN')}/success/{item_id}",
+        cancel_url=f"http://{os.getenv('DOMAIN')}/cancel/",
     )
     return HttpResponse(str(session))
 
@@ -30,7 +31,8 @@ def get_buy_button(request, item_id):
         item = Item.objects.get(pk=item_id)
         price = stripe.Price.retrieve(item.price)
         item.number_price = price["unit_amount"] / 100
-        return render(request, template_name="buy.html", context={"item": item})
+        return render(request, template_name="buy.html", context={"item": item,
+                                                                  "stripe_key": os.getenv("STRIPE_PK_KEY")})
     except Item.DoesNotExist:
         return render(request, template_name="error.html")
 
